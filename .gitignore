@@ -20,6 +20,9 @@
 # production
 /build
 
+# local Wix / site HTML dumps (large; do not commit)
+_scrape*.html
+
 # misc
 .DS_Store
 *.pem
