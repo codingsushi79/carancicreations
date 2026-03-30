@@ -18,17 +18,16 @@ const sans = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.carancicreations.com"),
+  metadataBase: new URL("https://blankcreations.vercel.app"),
   title: {
-    default: "Caranci Creations | Cinematic Photo & Video",
-    template: "%s | Caranci Creations",
+    default: "blankcreations | Photo & Video",
+    template: "%s | blankcreations",
   },
   description:
-    "High-end cinematic photography and videography studio — storytelling with precision. Book photo and video work.",
+    "Photo and video studio — update this description for your brand.",
   openGraph: {
-    title: "Caranci Creations",
-    description:
-      "Cinematic photography and videography for brands, events, and creative projects.",
+    title: "blankcreations",
+    description: "Photo and video for brands, events, and creative projects.",
     type: "website",
   },
 };

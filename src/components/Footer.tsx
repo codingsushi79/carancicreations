@@ -10,8 +10,7 @@ export function Footer() {
             {site.name.toUpperCase()}
           </p>
           <p className="mt-2 max-w-xs text-sm leading-relaxed text-zinc-500">
-            Cinematic photography & videography. Based locally, available for
-            travel.
+            Photo and video. Update this tagline when your site copy is ready.
           </p>
           <p className="mt-4 text-sm text-zinc-500">
             <a
@@ -38,10 +37,19 @@ export function Footer() {
               Portfolio
             </Link>
             <Link
+              href="/request"
+              className="transition-colors hover:text-zinc-200"
+            >
+              Request job
+            </Link>
+            <Link
               href="/contact"
               className="transition-colors hover:text-zinc-200"
             >
               Contact
+            </Link>
+            <Link href="/account" className="transition-colors hover:text-zinc-200">
+              Account
             </Link>
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-500">

@@ -30,7 +30,7 @@ export default function HomePage() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="text-xs font-medium uppercase tracking-[0.35em] text-[#a89968]"
           >
-            Cinematic studio
+            Photo & video
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
@@ -61,10 +61,16 @@ export default function HomePage() {
               Explore collection
             </Link>
             <Link
-              href="/contact"
+              href="/request"
               className="inline-flex rounded-full border border-white/15 px-8 py-3.5 text-sm font-medium tracking-wide text-zinc-200 transition-colors hover:border-[#a89968]/50 hover:text-white"
             >
-              Book a project
+              Request a job
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex rounded-full border border-white/10 px-8 py-3.5 text-sm font-medium tracking-wide text-zinc-400 transition-colors hover:border-white/20 hover:text-zinc-200"
+            >
+              Contact
             </Link>
           </motion.div>
         </div>
@@ -142,12 +148,11 @@ export default function HomePage() {
           className="mx-auto max-w-3xl text-center"
         >
           <h2 className="font-serif text-2xl text-[#f5f2ed] sm:text-3xl">
-            Join the list
+            Get on the list
           </h2>
           <p className="mt-4 text-zinc-400">
-            New clients: ask about an exclusive{" "}
-            <span className="font-medium text-[#d4c4a8]">20% off</span> your
-            first booking when you reach out through our contact page.
+            Reach out through the contact page — add your own offer or mailing
+            list copy here when ready.
           </p>
           <Link
             href="/contact"

@@ -1,28 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { site } from "@/data/site";
+import { submitContactInquiry } from "@/app/actions/inquiries";
 
 export function ContactForm() {
-  const [sent, setSent] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    const name = String(data.get("name") ?? "");
-    const email = String(data.get("email") ?? "");
-    const type = String(data.get("type") ?? "");
-    const message = String(data.get("message") ?? "");
-    const subject = encodeURIComponent(
-      `[Caranci Creations] ${type} — ${name}`,
-    );
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nType: ${type}\n\n${message}`,
-    );
-    window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
-    setSent(true);
+    setError(null);
+    const fd = new FormData(e.currentTarget);
+    startTransition(async () => {
+      const res = await submitContactInquiry(fd);
+      if (res.ok) {
+        setDone(true);
+        e.currentTarget.reset();
+      } else {
+        setError(res.error);
+      }
+    });
   }
 
   return (
@@ -43,7 +43,8 @@ export function ContactForm() {
             name="name"
             type="text"
             autoComplete="name"
-            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none ring-[#a89968]/0 transition-[border-color,box-shadow,ring] placeholder:text-zinc-600 focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20"
+            disabled={pending}
+            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none ring-[#a89968]/0 transition-[border-color,box-shadow,ring] placeholder:text-zinc-600 focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20 disabled:opacity-50"
             placeholder="Your name"
           />
         </label>
@@ -56,7 +57,8 @@ export function ContactForm() {
             name="email"
             type="email"
             autoComplete="email"
-            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none transition-[border-color,box-shadow,ring] placeholder:text-zinc-600 focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20"
+            disabled={pending}
+            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none transition-[border-color,box-shadow,ring] placeholder:text-zinc-600 focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20 disabled:opacity-50"
             placeholder="you@email.com"
           />
         </label>
@@ -68,7 +70,8 @@ export function ContactForm() {
         <select
           name="type"
           required
-          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none transition-[border-color,box-shadow,ring] focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20"
+          disabled={pending}
+          className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none transition-[border-color,box-shadow,ring] focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20 disabled:opacity-50"
         >
           <option value="Photography">Photography</option>
           <option value="Videography">Videography</option>
@@ -83,22 +86,27 @@ export function ContactForm() {
           required
           name="message"
           rows={5}
-          className="w-full resize-y rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none transition-[border-color,box-shadow,ring] placeholder:text-zinc-600 focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20"
+          disabled={pending}
+          className="w-full resize-y rounded-lg border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-zinc-100 outline-none transition-[border-color,box-shadow,ring] placeholder:text-zinc-600 focus:border-[#a89968]/40 focus:ring-2 focus:ring-[#a89968]/20 disabled:opacity-50"
           placeholder="Tell us about your timeline, location, and vision…"
         />
       </label>
+      {error ? (
+        <p className="text-sm text-red-400">{error}</p>
+      ) : null}
       <motion.button
         type="submit"
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.99 }}
-        className="w-full rounded-lg bg-[#a89968] px-6 py-3.5 text-sm font-semibold tracking-wide text-[#0c0b0a] transition-colors hover:bg-[#bfb08a] sm:w-auto"
+        disabled={pending}
+        whileHover={{ scale: pending ? 1 : 1.01 }}
+        whileTap={{ scale: pending ? 1 : 0.99 }}
+        className="w-full rounded-lg bg-[#a89968] px-6 py-3.5 text-sm font-semibold tracking-wide text-[#0c0b0a] transition-colors hover:bg-[#bfb08a] disabled:opacity-50 sm:w-auto"
       >
-        Send inquiry
+        {pending ? "Sending…" : "Send inquiry"}
       </motion.button>
-      {sent ? (
+      {done ? (
         <p className="text-sm leading-relaxed text-[#d4c4a8]">
-          Your email app should open with your message ready to send. If it
-          doesn’t, write us directly at{" "}
+          Thank you — we received your message and will reply soon. You can
+          also reach us at{" "}
           <a
             href={`mailto:${site.email}`}
             className="font-medium text-white underline decoration-[#a89968]/50 underline-offset-2 hover:decoration-white"

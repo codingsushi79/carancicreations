@@ -10,10 +10,10 @@ export type PortfolioItem = {
 
 export const portfolioItems: PortfolioItem[] = [
   {
-    title: "More Than a Teacher: The Legacy of Jim Skillings",
+    title: "Featured documentary — placeholder",
     category: "Videography",
     description:
-      "Driven by cinematic precision and heart, two students captured 43 years of history in a high-caliber documentary. Top-tier storytelling elevates a retirement into a poignant masterpiece — one frame at a time.",
+      "Replace this block with your flagship film or campaign. Use a strong one-liner on craft, client, and outcome.",
     href: undefined,
     image:
       "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1200&q=80",

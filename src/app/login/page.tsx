@@ -4,7 +4,7 @@ import { LoginForm } from "@/components/AuthForms";
 
 export const metadata: Metadata = {
   title: "Log in",
-  description: "Sign in to your Caranci Creations account.",
+  description: "Sign in to your blankcreations account.",
 };
 
 export default function LoginPage() {
@@ -12,7 +12,7 @@ export default function LoginPage() {
     <AuthShell
       eyebrow="Account"
       title="Welcome back"
-      description="Sign in with Google to access your member perks and stay in touch about bookings."
+      description="Sign in with Google to manage your profile, invoices, and messages."
     >
       <LoginForm />
     </AuthShell>

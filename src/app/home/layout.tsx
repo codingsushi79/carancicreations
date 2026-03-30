@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Home",
   description:
-    "Caranci Creations — cinematic photography and videography for high-impact visual storytelling.",
+    "blankcreations — photo and video for brands, events, and creative work.",
 };
 
 export default function HomeLayout({

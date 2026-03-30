@@ -1,8 +1,13 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
+import { isManagerEmail } from "@/lib/managers";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
+  adapter: PrismaAdapter(prisma),
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
@@ -13,9 +18,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
+    async jwt({ token, user }) {
+      const sub = (user?.id ?? token.sub) as string | undefined;
+      if (!sub) return token;
+
+      if (user?.email) {
+        const role = isManagerEmail(user.email) ? "MANAGER" : "USER";
+        await prisma.user.update({
+          where: { id: sub },
+          data: { role },
+        });
+      }
+
+      const dbUser = await prisma.user.findUnique({
+        where: { id: sub },
+        select: { role: true },
+      });
+      token.role = dbUser?.role ?? "USER";
+      return token;
+    },
     session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
+      if (session.user) {
+        session.user.id = (token.sub as string) ?? "";
+        session.user.role = (token.role as "USER" | "MANAGER") ?? "USER";
       }
       return session;
     },
@@ -26,9 +51,16 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
+      role: "USER" | "MANAGER";
       name?: string | null;
       email?: string | null;
       image?: string | null;
     };
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    role?: "USER" | "MANAGER";
   }
 }

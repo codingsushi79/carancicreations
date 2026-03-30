@@ -1,79 +1,11 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Scrape: carancicreations.com (Wix)",
-  "sourceUrl": "https://www.carancicreations.com/",
-  "scrapedAt": "2026-03-30",
-  "generator": "Wix.com Website Builder / Thunderbolt",
-  "wixMeta": {
-    "siteId": "658cc0bf-5a92-4bef-bdca-83dcd84e0f11",
-    "applicationInstanceId": "da278b1e-ecae-47db-b0ac-ac791aa800b7",
-    "publishedVersion": "132"
+  "title": "Site notes — blankcreations",
+  "brand": "blankcreations",
+  "contactPlaceholders": {
+    "email": "hello@example.com",
+    "phone": "(555) 000-0000",
+    "address": "123 Main Street, ST, US"
   },
-  "routesVerifiedHttp200": ["/", "/home", "/contact", "/portfolio"],
-  "routesChecked404": [
-    "/account",
-    "/sign-in",
-    "/sign-up",
-    "/login",
-    "/register",
-    "/member",
-    "/members-area"
-  ],
-  "accountCreationAndLogin": {
-    "summary": "There is NO standalone /login or /sign-up HTML page on this domain. Authentication is Wix Members, injected after JavaScript runs.",
-    "widget": {
-      "component": "wixui-login-social-bar (Login Social Bar)",
-      "selectorHints": [
-        ".wixui-login-social-bar",
-        "button._login_1eeqr_1",
-        "[data-testid=\"handle-button\"]"
-      ],
-      "behavior": "Clicking 'Log In' opens Wix's members modal / flow (email, social, or sign-up), not a crawlable document."
-    },
-    "howToCaptureLiveUrls": [
-      "Open the live site in Chrome, click Log In, DevTools → Network, filter XHR/fetch for wix, users.wix.com, or members.",
-      "Use Wix dashboard → Settings → Members to see enabled login methods."
-    ],
-    "typicalWixHosts": [
-      "https://users.wix.com/",
-      "https://www.wix.com/_api/accounts-browser-sso-service/v1/"
-    ],
-    "nextAppNote": "This repo adds /login and /signup as first-party pages with forms; wire them to Auth.js, Clerk, Supabase Auth, or similar — they are not copies of Wix's proprietary widget HTML."
-  },
-  "structuredDataJsonLd": {
-    "LocalBusiness": {
-      "@type": "LocalBusiness",
-      "name": "Caranci Creations",
-      "url": "https://www.carancicreations.com",
-      "image": "https://static.wixstatic.com/media/888b5a_d66e397b3fa34926975bb36559b8bd7b~mv2.jpeg",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "US",
-        "addressRegion": "RI",
-        "streetAddress": "Kirkbrae Drive"
-      }
-    }
-  },
-  "visibleCopyFromHome": {
-    "title": "Caranci Creations - Local Photographer | Photography Services",
-    "tagline": "A high-end cinematic photography and videography studio dedicated to high-impact visual storytelling.",
-    "headline": "Caranci CREATIONS",
-    "promo": "Join Today! — Exclusive 20% off your First Purchase (via Log In / member flow on original site)",
-    "services": [
-      {
-        "name": "Cinematography",
-        "blurb": "Professional high-end videography; cinematic storytelling for brand or creative projects."
-      },
-      {
-        "name": "Photography Jobs",
-        "blurb": "Custom photos; top-of-the-line equipment; negotiable pricing."
-      }
-    ],
-    "footer": {
-      "phoneDisplay": "(401) 864-1333",
-      "phoneTel": "tel:4018641333",
-      "copyright": "© 2026 Caranci Creations. All rights reserved."
-    }
-  },
-  "rawHtmlDump": "Optional: save a Thunderbolt HTML snapshot as _scrape_home.html for grep; the repo ignores _scrape*.html via .gitignore — do not commit large dumps."
+  "note": "Replace placeholders in src/data/site.ts and root layout metadataBase when you have a live domain.",
+  "managerAccounts": "Default MANAGER_EMAILS in src/lib/managers.ts (override via env)."
 }

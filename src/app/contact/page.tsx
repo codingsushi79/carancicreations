@@ -4,7 +4,7 @@ import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Book photography or videography with Caranci Creations.",
+  description: "Book photography or videography with blankcreations.",
 };
 
 export default function ContactPage() {

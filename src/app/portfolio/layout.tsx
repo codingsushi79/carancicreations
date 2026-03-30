@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Portfolio",
   description:
-    "Videography and photography portfolio — Caranci Creations.",
+    "Videography and photography portfolio — blankcreations.",
 };
 
 export default function PortfolioLayout({

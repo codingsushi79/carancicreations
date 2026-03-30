@@ -1,0 +1,161 @@
+// Auth.js: https://authjs.dev/getting-started/adapters/prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  MANAGER
+}
+
+enum InquiryKind {
+  CONTACT
+  JOB
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  ARCHIVED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id               String        @id @default(cuid())
+  name             String?
+  email            String?       @unique
+  emailVerified    DateTime?     @map("email_verified")
+  image            String?
+  role             UserRole      @default(USER)
+  accounts         Account[]
+  sessions         Session[]
+  addresses        Address[]
+  phones           PhoneNumber[]
+  invoicesAsClient Invoice[]     @relation("InvoiceClient")
+  invoicesAsManager Invoice[]    @relation("InvoiceManager")
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  userId     String  @map("user_id")
+  label      String?
+  line1      String
+  line2      String?
+  city       String
+  region     String
+  postalCode String? @map("postal_code")
+  country    String  @default("US")
+  isDefault  Boolean @default(false) @map("is_default")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("addresses")
+}
+
+model PhoneNumber {
+  id        String  @id @default(cuid())
+  userId    String  @map("user_id")
+  label     String?
+  number    String
+  isDefault Boolean @default(false) @map("is_default")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("phone_numbers")
+}
+
+model Inquiry {
+  id           String        @id @default(cuid())
+  kind         InquiryKind
+  name         String
+  email        String
+  phone        String?
+  projectType  String?       @map("project_type")
+  message      String        @db.Text
+  eventDate    String?       @map("event_date")
+  location     String?
+  budget       String?
+  status       InquiryStatus @default(NEW)
+  internalNote String?       @map("internal_note") @db.Text
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@map("inquiries")
+}
+
+model Invoice {
+  id                 String        @id @default(cuid())
+  clientId           String        @map("client_id")
+  managerId          String        @map("manager_id")
+  title              String
+  description        String?       @db.Text
+  amountCents        Int           @map("amount_cents")
+  currency           String        @default("USD")
+  status             InvoiceStatus @default(DRAFT)
+  paypalOrderId      String?       @map("paypal_order_id")
+  paypalCaptureId    String?       @map("paypal_capture_id")
+  manualPaypalUrl    String?       @map("manual_paypal_url")
+  managerPaypalEmail String?       @map("manager_paypal_email")
+  paidAt             DateTime?     @map("paid_at")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  client  User @relation("InvoiceClient", fields: [clientId], references: [id], onDelete: Cascade)
+  manager User @relation("InvoiceManager", fields: [managerId], references: [id], onDelete: Restrict)
+
+  @@map("invoices")
+}

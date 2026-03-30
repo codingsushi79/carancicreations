@@ -9,6 +9,7 @@ import { signOut, useSession } from "next-auth/react";
 const links = [
   { href: "/home", label: "Home" },
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/request", label: "Request job" },
   { href: "/contact", label: "Contact" },
 ] as const;
 
@@ -23,10 +24,10 @@ export function Nav() {
           href="/home"
           className="group flex flex-col leading-none transition-opacity hover:opacity-90"
         >
-          <span className="font-serif text-lg tracking-[0.2em] text-[#e8e4df] sm:text-xl">
-            CARANCI
+          <span className="font-serif text-lg tracking-[0.18em] text-[#e8e4df] sm:text-xl">
+            BLANK
           </span>
-          <span className="font-serif text-[10px] tracking-[0.55em] text-[#a89968] sm:text-[11px]">
+          <span className="font-serif text-[10px] tracking-[0.5em] text-[#a89968] sm:text-[11px]">
             CREATIONS
           </span>
         </Link>
@@ -77,6 +78,28 @@ export function Nav() {
                 <span className="hidden max-w-[7rem] truncate text-zinc-400 sm:inline">
                   {session.user.name ?? session.user.email}
                 </span>
+                <Link
+                  href="/account"
+                  className={`px-2 py-2 transition-colors sm:px-3 ${
+                    pathname.startsWith("/account")
+                      ? "text-[#d4c4a8]"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  Account
+                </Link>
+                {session.user.role === "MANAGER" ? (
+                  <Link
+                    href="/dashboard"
+                    className={`px-2 py-2 transition-colors sm:px-3 ${
+                      pathname.startsWith("/dashboard")
+                        ? "text-[#d4c4a8]"
+                        : "text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                ) : null}
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: "/home" })}
