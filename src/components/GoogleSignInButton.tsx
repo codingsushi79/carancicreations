@@ -24,7 +24,7 @@ export function GoogleSignInButton({ label = "Continue with Google" }: Props) {
       type="button"
       onClick={handleClick}
       disabled={pending}
-      className="flex w-full items-center justify-center gap-3 rounded-lg border border-white/[0.12] bg-white/[0.04] py-3.5 text-sm font-medium text-zinc-100 transition-colors hover:bg-white/[0.08] disabled:cursor-wait disabled:opacity-60"
+      className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/[0.14] bg-white/[0.06] py-4 text-sm font-semibold tracking-wide text-zinc-100 shadow-inner shadow-white/[0.03] transition-[background-color,border-color,transform] hover:border-white/[0.2] hover:bg-white/[0.1] active:scale-[0.99] disabled:cursor-wait disabled:opacity-60"
     >
       <GoogleGlyph className="h-5 w-5 shrink-0" aria-hidden />
       {pending ? "Redirecting…" : label}

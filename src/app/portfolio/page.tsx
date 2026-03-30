@@ -39,7 +39,7 @@ export default function PortfolioPage() {
           <p className="text-xs font-medium uppercase tracking-[0.35em] text-[#a89968]">
             Portfolio
           </p>
-          <h1 className="mt-4 font-serif text-4xl font-medium text-[#f5f2ed] sm:text-5xl">
+          <h1 className="mt-4 font-serif text-4xl font-medium tracking-tight text-[#f5f2ed] sm:text-5xl">
             Selected projects
           </h1>
           <p className="mt-4 text-lg text-zinc-500">
@@ -86,13 +86,12 @@ export default function PortfolioPage() {
                     View project →
                   </span>
                 ) : (
-                  <p className="mt-6 text-sm text-zinc-600">
-                    Add a film or gallery URL in{" "}
-                    <code className="rounded bg-white/5 px-1 text-zinc-500">
-                      src/data/portfolio.ts
-                    </code>{" "}
-                    when ready.
-                  </p>
+                  <Link
+                    href="/contact"
+                    className="mt-6 inline-flex text-sm font-medium text-[#a89968] transition-colors hover:text-[#d4c4a8]"
+                  >
+                    Inquire about this film →
+                  </Link>
                 )}
               </div>
             </motion.article>

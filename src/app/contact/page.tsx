@@ -9,13 +9,19 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="flex flex-1 flex-col px-5 py-12 sm:px-8 sm:py-16">
-      <div className="mx-auto grid w-full max-w-6xl gap-14 lg:grid-cols-2 lg:gap-20">
+    <div className="relative flex flex-1 flex-col overflow-hidden px-5 py-12 sm:px-8 sm:py-16">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-50"
+        aria-hidden
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_0%_0%,rgba(168,153,104,0.1),transparent)]" />
+      </div>
+      <div className="relative mx-auto grid w-full max-w-6xl gap-14 lg:grid-cols-2 lg:gap-20">
         <div>
           <p className="text-xs font-medium uppercase tracking-[0.35em] text-[#a89968]">
             Contact
           </p>
-          <h1 className="mt-4 font-serif text-4xl font-medium text-[#f5f2ed] sm:text-5xl">
+          <h1 className="mt-4 font-serif text-4xl font-medium tracking-tight text-[#f5f2ed] sm:text-5xl">
             Let&apos;s create together
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-zinc-500">
@@ -51,7 +57,7 @@ export default function ContactPage() {
             </p>
           </div>
         </div>
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 sm:p-8">
+        <div className="rounded-2xl border border-white/[0.1] bg-[#121110]/60 p-6 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.75)] ring-1 ring-white/[0.04] backdrop-blur-sm sm:p-8">
           <ContactForm />
         </div>
       </div>

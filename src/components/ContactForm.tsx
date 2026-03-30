@@ -96,10 +96,16 @@ export function ContactForm() {
         Send inquiry
       </motion.button>
       {sent ? (
-        <p className="text-sm text-[#a89968]">
-          Opening your email app — adjust the address in{" "}
-          <code className="rounded bg-white/5 px-1">ContactForm.tsx</code> if
-          needed.
+        <p className="text-sm leading-relaxed text-[#d4c4a8]">
+          Your email app should open with your message ready to send. If it
+          doesn’t, write us directly at{" "}
+          <a
+            href={`mailto:${site.email}`}
+            className="font-medium text-white underline decoration-[#a89968]/50 underline-offset-2 hover:decoration-white"
+          >
+            {site.email}
+          </a>
+          .
         </p>
       ) : null}
     </motion.form>
