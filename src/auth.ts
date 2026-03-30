@@ -6,6 +6,7 @@ import { isManagerEmail } from "@/lib/managers";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
+  secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
   providers: [
@@ -16,25 +17,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   callbacks: {
     async jwt({ token, user }) {
       const sub = (user?.id ?? token.sub) as string | undefined;
       if (!sub) return token;
 
-      if (user?.email) {
-        const role = isManagerEmail(user.email) ? "MANAGER" : "USER";
-        await prisma.user.update({
-          where: { id: sub },
-          data: { role },
-        });
-      }
+      try {
+        if (user?.email) {
+          const role = isManagerEmail(user.email) ? "MANAGER" : "USER";
+          await prisma.user.update({
+            where: { id: sub },
+            data: { role },
+          });
+        }
 
-      const dbUser = await prisma.user.findUnique({
-        where: { id: sub },
-        select: { role: true },
-      });
-      token.role = dbUser?.role ?? "USER";
+        const dbUser = await prisma.user.findUnique({
+          where: { id: sub },
+          select: { role: true },
+        });
+        token.role = dbUser?.role ?? "USER";
+      } catch (err) {
+        console.error("[auth] jwt callback:", err);
+        token.role =
+          user?.email && isManagerEmail(user.email) ? "MANAGER" : "USER";
+      }
       return token;
     },
     session({ session, token }) {
