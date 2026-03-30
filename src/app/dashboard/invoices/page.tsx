@@ -4,11 +4,7 @@ import {
   CreateInvoiceForm,
   type InvoicePrefill,
 } from "@/components/dashboard/CreateInvoiceForm";
-import {
-  markInvoicePaidManualForm,
-  setInvoiceStatusForm,
-} from "@/app/actions/dashboard";
-import { InvoiceStatus } from "@/generated/prisma/enums";
+import { DashboardInvoiceCard } from "@/components/dashboard/DashboardInvoiceCard";
 
 export const dynamic = "force-dynamic";
 
@@ -84,96 +80,23 @@ export default async function DashboardInvoicesPage({
 
       <div>
         <h2 className="font-serif text-xl text-[#e8e4df]">Recent invoices</h2>
+        <p className="mt-2 text-xs text-zinc-600">
+          Voided invoices stay in this list (they are not deleted). Use status
+          or Save to change them again.
+        </p>
         <ul className="mt-4 space-y-3">
           {invoices.map((inv) => (
-            <li
+            <DashboardInvoiceCard
               key={inv.id}
-              className="rounded-xl border border-white/[0.08] bg-[#121110]/40 p-4"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-medium text-zinc-200">{inv.title}</p>
-                  <p className="text-xs text-zinc-500">
-                    Client: {inv.client.name ?? inv.client.email}
-                  </p>
-                  {inv.inquiry && inv.inquiry.kind === "JOB" ? (
-                    <p className="mt-1 text-xs text-violet-300/80">
-                      Linked job: {inv.inquiry.name}
-                    </p>
-                  ) : null}
-                  <p className="text-xs text-zinc-600">{inv.id}</p>
-                </div>
-                <span className="text-lg text-[#d4c4a8]">
-                  {money(inv.amountCents, inv.currency)}
-                </span>
-              </div>
-              <form
-                action={setInvoiceStatusForm}
-                className="mt-3 flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-3"
-              >
-                <input type="hidden" name="id" value={inv.id} />
-                <label className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-                  <span>Status</span>
-                  <select
-                    name="status"
-                    defaultValue={inv.status}
-                    className="rounded-lg border border-white/[0.1] bg-white/[0.05] px-2 py-1.5 text-sm text-zinc-200"
-                  >
-                    <option value={InvoiceStatus.DRAFT}>Draft</option>
-                    <option value={InvoiceStatus.SENT}>Sent</option>
-                    <option value={InvoiceStatus.PAID}>Paid</option>
-                    <option value={InvoiceStatus.CANCELLED}>Cancelled</option>
-                  </select>
-                </label>
-                <button
-                  type="submit"
-                  className="rounded-lg border border-[#a89968]/35 px-3 py-1.5 text-xs font-medium text-[#d4c4a8] hover:bg-[#a89968]/10"
-                >
-                  Save status
-                </button>
-              </form>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {inv.status === "DRAFT" ? (
-                  <form action={setInvoiceStatusForm} className="inline">
-                    <input type="hidden" name="id" value={inv.id} />
-                    <input type="hidden" name="status" value={InvoiceStatus.SENT} />
-                    <button
-                      type="submit"
-                      className="rounded-lg border border-amber-500/30 px-2 py-1 text-xs text-amber-200 hover:bg-amber-500/10"
-                    >
-                      Mark sent
-                    </button>
-                  </form>
-                ) : null}
-                {inv.status === "SENT" ? (
-                  <form action={markInvoicePaidManualForm} className="inline">
-                    <input type="hidden" name="id" value={inv.id} />
-                    <button
-                      type="submit"
-                      className="rounded-lg border border-emerald-500/30 px-2 py-1 text-xs text-emerald-200 hover:bg-emerald-500/10"
-                    >
-                      Mark paid (manual)
-                    </button>
-                  </form>
-                ) : null}
-                {inv.status !== "CANCELLED" && inv.status !== "PAID" ? (
-                  <form action={setInvoiceStatusForm} className="inline">
-                    <input type="hidden" name="id" value={inv.id} />
-                    <input
-                      type="hidden"
-                      name="status"
-                      value={InvoiceStatus.CANCELLED}
-                    />
-                    <button
-                      type="submit"
-                      className="rounded-lg border border-zinc-600 px-2 py-1 text-xs text-zinc-400 hover:bg-white/[0.05]"
-                    >
-                      Cancel
-                    </button>
-                  </form>
-                ) : null}
-              </div>
-            </li>
+              id={inv.id}
+              status={inv.status}
+              title={inv.title}
+              amountDisplay={money(inv.amountCents, inv.currency)}
+              clientDisplay={inv.client.name ?? inv.client.email ?? "—"}
+              jobLabel={
+                inv.inquiry?.kind === "JOB" ? inv.inquiry.name : null
+              }
+            />
           ))}
         </ul>
       </div>
