@@ -64,13 +64,24 @@ export async function updateInquiryNoteForm(formData: FormData) {
   revalidatePath("/dashboard/inquiries");
 }
 
-export async function deleteInquiryForm(formData: FormData) {
+export async function deleteInquiryById(id: string) {
   await requireManager();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) return;
-  await prisma.inquiry.delete({ where: { id } });
+  const clean = String(id ?? "").trim();
+  if (!clean) {
+    return { ok: false as const, error: "Missing id." };
+  }
+  try {
+    await prisma.inquiry.delete({ where: { id: clean } });
+  } catch (err) {
+    console.error("[deleteInquiryById]", err);
+    return {
+      ok: false as const,
+      error: "Could not delete this request. Try again.",
+    };
+  }
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/inquiries");
+  return { ok: true as const };
 }
 
 export async function createInvoice(formData: FormData) {

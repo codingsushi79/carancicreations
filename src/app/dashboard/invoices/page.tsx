@@ -19,16 +19,24 @@ function money(cents: number, cur: string) {
   }).format(cents / 100);
 }
 
+function firstSearchParam(
+  v: string | string[] | undefined,
+): string | undefined {
+  if (v === undefined) return undefined;
+  return Array.isArray(v) ? v[0] : v;
+}
+
 export default async function DashboardInvoicesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ inquiryId?: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const sp = await searchParams;
+  const sp = searchParams ? await searchParams : {};
+  const inquiryIdFromQuery = firstSearchParam(sp.inquiryId);
   let prefill: InvoicePrefill | undefined;
-  if (sp.inquiryId) {
+  if (inquiryIdFromQuery) {
     const inq = await prisma.inquiry.findUnique({
-      where: { id: sp.inquiryId },
+      where: { id: inquiryIdFromQuery },
     });
     if (inq?.kind === "JOB") {
       const titleBase = inq.projectType?.trim() || "Job";
