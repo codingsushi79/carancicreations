@@ -1,9 +1,18 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { createInvoice } from "@/app/actions/dashboard";
 
-export function CreateInvoiceForm() {
+export type InvoicePrefill = {
+  inquiryId: string;
+  clientEmail: string;
+  title: string;
+  description: string;
+};
+
+export function CreateInvoiceForm({ prefill }: { prefill?: InvoicePrefill }) {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [ok, setOk] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -18,6 +27,10 @@ export function CreateInvoiceForm() {
       if (res.ok) {
         setOk(true);
         e.currentTarget.reset();
+        if (prefill?.inquiryId) {
+          router.replace("/dashboard/invoices");
+        }
+        router.refresh();
       } else {
         setError(res.error);
       }
@@ -25,7 +38,20 @@ export function CreateInvoiceForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    <form
+      key={prefill?.inquiryId ?? "new"}
+      onSubmit={submit}
+      className="space-y-4"
+    >
+      {prefill?.inquiryId ? (
+        <>
+          <input type="hidden" name="inquiryId" value={prefill.inquiryId} />
+          <p className="rounded-lg border border-[#a89968]/25 bg-[#a89968]/10 px-3 py-2 text-sm text-[#d4c4a8]">
+            Prefilled from job request. Client must still have signed in with
+            Google using this email before you can create the invoice.
+          </p>
+        </>
+      ) : null}
       <p className="text-sm text-zinc-500">
         Client must have signed in at least once with Google using the same
         email you enter below.
@@ -38,6 +64,7 @@ export function CreateInvoiceForm() {
           type="email"
           autoComplete="off"
           disabled={pending}
+          defaultValue={prefill?.clientEmail ?? ""}
           className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 disabled:opacity-50"
         />
       </label>
@@ -48,6 +75,7 @@ export function CreateInvoiceForm() {
           name="title"
           placeholder="e.g. Wedding photo package — deposit"
           disabled={pending}
+          defaultValue={prefill?.title ?? ""}
           className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 disabled:opacity-50"
         />
       </label>
@@ -57,6 +85,7 @@ export function CreateInvoiceForm() {
           name="description"
           rows={3}
           disabled={pending}
+          defaultValue={prefill?.description ?? ""}
           className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-zinc-100 disabled:opacity-50"
         />
       </label>

@@ -1,9 +1,11 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { InvoicePayButtons } from "@/components/account/InvoicePayButtons";
+
+export const dynamic = "force-dynamic";
 
 function formatMoney(cents: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
@@ -19,7 +21,11 @@ export default async function InvoiceDetailPage({
 }) {
   const { id } = await params;
   const session = await auth();
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id) {
+    redirect(
+      `/login?callbackUrl=${encodeURIComponent(`/account/invoices/${id}`)}`,
+    );
+  }
 
   const invoice = await prisma.invoice.findFirst({
     where: { id, clientId: session.user.id },

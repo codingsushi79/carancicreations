@@ -1,10 +1,13 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function AccountOverviewPage() {
   const session = await auth();
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id) {
+    redirect("/login?callbackUrl=/account");
+  }
 
   const [addrCount, phoneCount, openInvoices] = await Promise.all([
     prisma.address.count({ where: { userId: session.user.id } }),

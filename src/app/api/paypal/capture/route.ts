@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { capturePaypalOrder } from "@/lib/paypal";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -46,6 +47,11 @@ export async function POST(req: Request) {
       paidAt: new Date(),
     },
   });
+
+  revalidatePath("/account/invoices");
+  revalidatePath(`/account/invoices/${invoiceId}`);
+  revalidatePath("/dashboard/invoices");
+  revalidatePath("/dashboard");
 
   return NextResponse.json({ ok: true });
 }

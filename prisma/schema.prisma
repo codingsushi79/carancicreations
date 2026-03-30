@@ -133,6 +133,7 @@ model Inquiry {
   internalNote String?       @map("internal_note") @db.Text
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
+  invoices     Invoice[]
 
   @@map("inquiries")
 }
@@ -141,6 +142,7 @@ model Invoice {
   id                 String        @id @default(cuid())
   clientId           String        @map("client_id")
   managerId          String        @map("manager_id")
+  inquiryId          String?       @map("inquiry_id")
   title              String
   description        String?       @db.Text
   amountCents        Int           @map("amount_cents")
@@ -156,6 +158,8 @@ model Invoice {
 
   client  User @relation("InvoiceClient", fields: [clientId], references: [id], onDelete: Cascade)
   manager User @relation("InvoiceManager", fields: [managerId], references: [id], onDelete: Restrict)
+  inquiry Inquiry? @relation(fields: [inquiryId], references: [id], onDelete: SetNull)
 
+  @@index([inquiryId])
   @@map("invoices")
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 type Props = {
   invoiceId: string;
@@ -20,31 +20,43 @@ export function InvoicePayButtons({
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const paypalReturn = searchParams.get("paypal");
+  const orderToken = searchParams.get("token");
+  const captureAttempted = useRef(false);
 
   useEffect(() => {
-    const paypal = searchParams.get("paypal");
-    const token = searchParams.get("token");
-    if (paypal !== "1" || !token || status !== "SENT") return;
+    if (paypalReturn !== "1" || !orderToken || status !== "SENT") return;
+    if (captureAttempted.current) return;
+    captureAttempted.current = true;
 
     startTransition(async () => {
       try {
         const res = await fetch("/api/paypal/capture", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: token, invoiceId }),
+          body: JSON.stringify({ orderId: orderToken, invoiceId }),
         });
-        const data = await res.json();
+        let data: { error?: string } = {};
+        try {
+          data = (await res.json()) as { error?: string };
+        } catch {
+          captureAttempted.current = false;
+          setError("Could not read payment response. Try refreshing the page.");
+          return;
+        }
         if (!res.ok) {
+          captureAttempted.current = false;
           setError(data.error ?? "Payment could not be completed.");
           return;
         }
         router.replace(`/account/invoices/${invoiceId}`);
         router.refresh();
       } catch {
+        captureAttempted.current = false;
         setError("Something went wrong capturing payment.");
       }
     });
-  }, [searchParams, invoiceId, status, router]);
+  }, [paypalReturn, orderToken, invoiceId, status, router]);
 
   if (status !== "SENT") return null;
 

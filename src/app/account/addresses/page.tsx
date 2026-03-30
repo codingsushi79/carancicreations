@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 import {
   addAddress,
   deleteAddress,
@@ -8,7 +9,9 @@ import {
 
 export default async function AddressesPage() {
   const session = await auth();
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id) {
+    redirect("/login?callbackUrl=/account/addresses");
+  }
 
   const addresses = await prisma.address.findMany({
     where: { userId: session.user.id },

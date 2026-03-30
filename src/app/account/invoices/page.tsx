@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 function formatMoney(cents: number, currency: string) {
   return new Intl.NumberFormat("en-US", {
@@ -11,7 +12,9 @@ function formatMoney(cents: number, currency: string) {
 
 export default async function ClientInvoicesPage() {
   const session = await auth();
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id) {
+    redirect("/login?callbackUrl=/account/invoices");
+  }
 
   const invoices = await prisma.invoice.findMany({
     where: { clientId: session.user.id },

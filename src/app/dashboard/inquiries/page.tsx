@@ -1,8 +1,12 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import {
   updateInquiryFromForm,
   updateInquiryNoteForm,
 } from "@/app/actions/dashboard";
+import { DeleteInquiryForm } from "@/components/dashboard/DeleteInquiryForm";
+
+export const dynamic = "force-dynamic";
 
 export default async function DashboardInquiriesPage() {
   const inquiries = await prisma.inquiry.findMany({
@@ -63,7 +67,15 @@ export default async function DashboardInquiriesPage() {
                   {q.message}
                 </p>
               </div>
-              <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end">
+              <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+                {q.kind === "JOB" ? (
+                  <Link
+                    href={`/dashboard/invoices?inquiryId=${q.id}`}
+                    className="inline-flex rounded-lg border border-[#a89968]/40 bg-[#a89968]/10 px-3 py-1.5 text-xs font-medium text-[#d4c4a8] hover:bg-[#a89968]/20"
+                  >
+                    Create invoice from this job
+                  </Link>
+                ) : null}
                 <form action={updateInquiryFromForm} className="flex flex-wrap items-center gap-2">
                   <input type="hidden" name="id" value={q.id} />
                   <label className="text-xs text-zinc-500">Status</label>
@@ -84,6 +96,7 @@ export default async function DashboardInquiriesPage() {
                     Save status
                   </button>
                 </form>
+                <DeleteInquiryForm id={q.id} />
               </div>
               <form action={updateInquiryNoteForm} className="mt-4 space-y-2">
                 <input type="hidden" name="id" value={q.id} />

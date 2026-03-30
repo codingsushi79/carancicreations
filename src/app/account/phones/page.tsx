@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 import {
   addPhone,
   deletePhone,
@@ -8,7 +9,9 @@ import {
 
 export default async function PhonesPage() {
   const session = await auth();
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id) {
+    redirect("/login?callbackUrl=/account/phones");
+  }
 
   const phones = await prisma.phoneNumber.findMany({
     where: { userId: session.user.id },
